@@ -1,10 +1,13 @@
 
 const $studentItem = $('.student-item');
 const pageNumbers = Math.ceil($studentItem.length/10);
+const searchNumbers = Math.ceil()
 const pageLink = document.getElementsByClassName('pagination')[0];
 const ul = document.createElement('ul');
-
-
+const searchBar = document.createElement('div');
+const input = document.createElement('input');
+const button = document.createElement('button');
+const pageHeader = document.getElementsByClassName('page-header cf')[0];
 
 
 //Displays 10 students per page
@@ -17,13 +20,13 @@ function showPage(pageNumber){
   }
 }
 
-
 //Appends page link buttons to DOM dynamically
 function appendPageLinks(){
   pageLink.appendChild(ul);
   for (let i=0; i< pageNumbers; i += 1){
     let a = document.createElement('a');
     let li = document.createElement('li');
+    li.setAttribute('class', 'lists')
     a.innerHTML = i+1;
     a.setAttribute('href', '#');
     ul.appendChild(li);
@@ -37,7 +40,53 @@ function appendPageLinks(){
   }
 }
 
+//Dynamically adds searchbar to page
+function appendSearchBar(){
+  searchBar.setAttribute('class', 'student-search');
+  $(input).attr({
+    'id': 'myInput',
+    'onkeyup': 'searchPage()',
+    'placeholder': 'Search for students...'
+  });
+  button.textContent = 'Search';
+  pageHeader.appendChild(searchBar);
+  searchBar.appendChild(input);
+  searchBar.appendChild(button);
 
+
+}
+
+function searchPage(){
+  let userInput = document.getElementById('myInput');
+  let filteredInput = userInput.value.toLowerCase();
+  let studentInfo = document.getElementsByClassName('student-list')[0];
+  let names = studentInfo.getElementsByTagName('h3');
+  let email = document.getElementsByClassName('email');
+  for (let i = 0; i <= $studentItem.length; i += 1){
+    let matchingNames = names[i];
+    let matchingEmail = email[i];
+    let a = document.getElementsByTagName('a')[i];
+    let li = document.getElementsByClassName('lists')[i];
+    if (matchingNames) {
+      if (matchingNames.innerHTML.toLowerCase().indexOf(filteredInput) > -1 ||
+          matchingEmail.innerHTML.toLowerCase().indexOf(filteredInput) > -1 ){
+        $studentItem.eq(i).show();
+      } else {
+        $studentItem.eq(i).hide();
+        }
+      }
+    }
+  }
+// button.addEventListener('click', function() {
+//   var userInput = document.getElementById("myInput");
+//   var filter = userInput.value.toUpperCase();
+//   var table = document.getElementById("myTable");
+//   var tr = table.getElementsByTagName("tr");
+//   for (let i=0; i< $studentItem.length; i += 1)
+//
+// });
 
 showPage(0);
 appendPageLinks();
+appendSearchBar();
+searchPage();
