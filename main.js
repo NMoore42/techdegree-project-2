@@ -1,19 +1,20 @@
 
 const $studentItem = $('.student-item');
 const pageNumbers = Math.ceil($studentItem.length/10);
-const searchNumbers = Math.ceil()
 const pageLink = document.getElementsByClassName('pagination')[0];
 const ul = document.createElement('ul');
 const searchBar = document.createElement('div');
 const input = document.createElement('input');
 const button = document.createElement('button');
 const pageHeader = document.getElementsByClassName('page-header cf')[0];
+const infoBlock = document.getElementsByClassName('student-item cf');
+const onPage = document.getElementsByName('onPage');
 
 
 //Displays 10 students per page
 function showPage(pageNumber){
   $studentItem.hide();
-  for (i = 0; i <= $studentItem.length; i += 1) {
+  for (let i = 0; i <= $studentItem.length; i += 1) {
     if (i >= pageNumber * 10 && i <= (pageNumber * 10) + 9){
       $studentItem.eq(i).show();
     }
@@ -70,23 +71,17 @@ function searchPage(){
     if (matchingNames) {
       if (matchingNames.innerHTML.toLowerCase().indexOf(filteredInput) > -1 ||
           matchingEmail.innerHTML.toLowerCase().indexOf(filteredInput) > -1 ){
-        $studentItem.eq(i).show();
+        infoBlock[i].setAttribute('name', 'onPage')
+        infoBlock[i].style.display = 'block';
       } else {
-        $studentItem.eq(i).hide();
+        infoBlock[i].removeAttribute('name', 'onPage');
+        infoBlock[i].style.display = 'none';
         }
       }
     }
   }
-// button.addEventListener('click', function() {
-//   var userInput = document.getElementById("myInput");
-//   var filter = userInput.value.toUpperCase();
-//   var table = document.getElementById("myTable");
-//   var tr = table.getElementsByTagName("tr");
-//   for (let i=0; i< $studentItem.length; i += 1)
-//
-// });
 
-showPage(0);
 appendPageLinks();
 appendSearchBar();
 searchPage();
+showPage(0);
