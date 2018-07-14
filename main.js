@@ -58,19 +58,16 @@ const search = function (){
   for (let i = 0; i < studentItem.length; i += 1){
     if (studentName[i].innerHTML.toLowerCase().indexOf(userInput) > -1 ||
         studentEmail[i].innerHTML.toLowerCase().indexOf(userInput) > -1){
-      /*studentItem[i].style.display = 'block';
-      studentItem[i].setAttribute('name', 'printed');*/
+      studentItem[i].style.display = '';
     } else {
-      /*studentItem[i].style.display = 'none';
-      studentItem[i].removeAttribute('name', 'printed');*/
-      document.getElementsByClassName('student-list')[0].removeChild(document.getElementsByClassName('student-item cf')[i]);
+      studentItem[i].style.display = 'none';
     }
   }
 }
 
 
 button.addEventListener('click', search);
-input.addEventListener('keypress', search);
+input.addEventListener('keyup', search);
 
 
 appendPageLinks(studentItem.length);
