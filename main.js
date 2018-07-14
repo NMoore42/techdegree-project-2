@@ -1,4 +1,7 @@
-
+//This program dynamically takes a list of students and displays them in groups of ten per page.
+//There is a search feature that allows the user to search by email and name, but is not finished
+//I will go back once I am more familiar with JS to fully incorporate search feature
+//And to allow page link buttons to update as well
 const studentItem = document.getElementsByClassName('student-item cf');
 const pagination = document.getElementsByClassName('pagination')[0];
 const searchBar = document.createElement('div');
@@ -65,12 +68,11 @@ const search = function (){
   }
 }
 
-
+//addEventListeners provide click and keyup feature for search bar
 button.addEventListener('click', search);
 input.addEventListener('keyup', search);
 
-
+//Called functions
 appendPageLinks(studentItem.length);
 appendSearchBar();
-
 showPage(0, studentItem.length);
