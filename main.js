@@ -1,42 +1,41 @@
 
-const $studentItem = $('.student-item');
-const pageNumbers = Math.ceil($studentItem.length/10);
-const pageLink = document.getElementsByClassName('pagination')[0];
-const ul = document.createElement('ul');
+const studentItem = document.getElementsByClassName('student-item cf');
+const pagination = document.getElementsByClassName('pagination')[0];
 const searchBar = document.createElement('div');
 const input = document.createElement('input');
 const button = document.createElement('button');
 const pageHeader = document.getElementsByClassName('page-header cf')[0];
-const infoBlock = document.getElementsByClassName('student-item cf');
-const onPage = document.getElementsByName('onPage');
-
 
 //Displays 10 students per page
-function showPage(pageNumber){
-  $studentItem.hide();
-  for (let i = 0; i <= $studentItem.length; i += 1) {
+function showPage(pageNumber, studentList){
+  for (let i = 0; i < studentList; i += 1) {
+    studentItem[i].style.display = 'none';
     if (i >= pageNumber * 10 && i <= (pageNumber * 10) + 9){
-      $studentItem.eq(i).show();
+      studentItem[i].style.display = 'block';
     }
   }
 }
 
-//Appends page link buttons to DOM dynamically
-function appendPageLinks(){
-  pageLink.appendChild(ul);
-  for (let i=0; i< pageNumbers; i += 1){
-    let a = document.createElement('a');
-    let li = document.createElement('li');
-    li.setAttribute('class', 'lists')
-    a.innerHTML = i+1;
-    a.setAttribute('href', '#');
-    ul.appendChild(li);
-    li.appendChild(a);
-    //Event listener dislays section of students corresponding to buttons
-    a.addEventListener('click', function() {
-      let clickedPage = a.textContent-1;
-      a.setAttribute('class', 'active');
-      showPage(clickedPage);
+//Appends page link buttons to DOM dynamically depending on studentList
+function appendPageLinks(studentList){
+  let pageNumbers = Math.ceil(studentList/10);
+  let pageLinkSection = pagination.appendChild(document.createElement('ul'));
+  for (let i = 0; i < pageNumbers; i += 1) {
+     let pageLink = document.createElement('li');
+     let page = document.createElement('a');
+     pageLinkSection.appendChild(pageLink)[i];
+     pageLink.appendChild(page)[i];
+   }
+  pagination.removeChild(pageLinkSection);
+  pagination.appendChild(pageLinkSection);
+  for (let i = 0; i < pageNumbers; i += 1){
+    let page = document.getElementsByTagName('a')[i];
+    page.innerHTML = i+1;
+    page.setAttribute('href', '#');
+    page.addEventListener('click', function(){
+      let clickedPage = page.textContent-1;
+      page.setAttribute('class', 'active');
+      showPage(clickedPage, studentItem.length);
     });
   }
 }
@@ -44,44 +43,37 @@ function appendPageLinks(){
 //Dynamically adds searchbar to page
 function appendSearchBar(){
   searchBar.setAttribute('class', 'student-search');
-  $(input).attr({
-    'id': 'myInput',
-    'onkeyup': 'searchPage()',
-    'placeholder': 'Search for students...'
-  });
-  button.textContent = 'Search';
+  input.setAttribute('placeholder', 'Search for students...');
   pageHeader.appendChild(searchBar);
   searchBar.appendChild(input);
   searchBar.appendChild(button);
-
-
+  button.textContent = 'Search';
 }
 
-function searchPage(){
-  let userInput = document.getElementById('myInput');
-  let filteredInput = userInput.value.toLowerCase();
-  let studentInfo = document.getElementsByClassName('student-list')[0];
-  let names = studentInfo.getElementsByTagName('h3');
-  let email = document.getElementsByClassName('email');
-  for (let i = 0; i <= $studentItem.length; i += 1){
-    let matchingNames = names[i];
-    let matchingEmail = email[i];
-    let a = document.getElementsByTagName('a')[i];
-    let li = document.getElementsByClassName('lists')[i];
-    if (matchingNames) {
-      if (matchingNames.innerHTML.toLowerCase().indexOf(filteredInput) > -1 ||
-          matchingEmail.innerHTML.toLowerCase().indexOf(filteredInput) > -1 ){
-        infoBlock[i].setAttribute('name', 'onPage')
-        infoBlock[i].style.display = 'block';
-      } else {
-        infoBlock[i].removeAttribute('name', 'onPage');
-        infoBlock[i].style.display = 'none';
-        }
-      }
+//Search function hides list items not containing user input in either email or name
+const search = function (){
+  let userInput = input.value.toLowerCase();
+  let studentName = document.getElementsByTagName('h3');
+  let studentEmail = document.getElementsByClassName('email');
+  for (let i = 0; i < studentItem.length; i += 1){
+    if (studentName[i].innerHTML.toLowerCase().indexOf(userInput) > -1 ||
+        studentEmail[i].innerHTML.toLowerCase().indexOf(userInput) > -1){
+      /*studentItem[i].style.display = 'block';
+      studentItem[i].setAttribute('name', 'printed');*/
+    } else {
+      /*studentItem[i].style.display = 'none';
+      studentItem[i].removeAttribute('name', 'printed');*/
+      document.getElementsByClassName('student-list')[0].removeChild(document.getElementsByClassName('student-item cf')[i]);
     }
   }
+}
 
-appendPageLinks();
+
+button.addEventListener('click', search);
+input.addEventListener('keypress', search);
+
+
+appendPageLinks(studentItem.length);
 appendSearchBar();
-searchPage();
-showPage(0);
+
+showPage(0, studentItem.length);
