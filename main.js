@@ -1,13 +1,21 @@
-//This program dynamically takes a list of students and displays them in groups of ten per page.
-//There is a search feature that allows the user to search by email and name, but is not finished
-//I will go back once I am more familiar with JS to fully incorporate search feature
-//And to allow page link buttons to update as well
-const studentItem = document.getElementsByClassName('student-item cf');
+
+const studentItem = document.getElementsByClassName('student-item cf yes');
+const studentItemStatic = document.getElementsByClassName('student-item cf');
 const pagination = document.getElementsByClassName('pagination')[0];
 const searchBar = document.createElement('div');
 const input = document.createElement('input');
+const inputValue = document.getElementsByTagName('input')[0];
 const button = document.createElement('button');
 const pageHeader = document.getElementsByClassName('page-header cf')[0];
+const pageNumbers = Math.ceil(studentItem.length/10);
+const createUl = document.createElement('ul');
+
+function addClass (){
+  for (let i = 0; i < studentItemStatic.length; i += 1) {
+  let activeStudents = document.getElementsByClassName('student-item')[i];
+  activeStudents.setAttribute('class', 'student-item cf yes');
+  }
+}
 
 //Displays 10 students per page
 function showPage(pageNumber, studentList){
@@ -19,22 +27,53 @@ function showPage(pageNumber, studentList){
   }
 }
 
-//Appends page link buttons to DOM dynamically depending on studentList
-function appendPageLinks(studentList){
-  let pageNumbers = Math.ceil(studentList/10);
-  let pageLinkSection = pagination.appendChild(document.createElement('ul'));
-  for (let i = 0; i < pageNumbers; i += 1) {
-     let pageLink = document.createElement('li');
-     let page = document.createElement('a');
-     pageLinkSection.appendChild(pageLink)[i];
-     pageLink.appendChild(page)[i];
+//Appends li to ul and a to li
+function appendPageLinks(){
+  pagination.appendChild(createUl);
+  if (document.getElementsByClassName('buttonA').length > 0 ||
+      document.getElementsByClassName('buttonLi').length > 0){
+    removeChild();
+  }
+  let pageNumbersAppend = Math.ceil(studentItem.length/10);
+  for (let i = 0; i < pageNumbersAppend; i += 1) {
+    let createLi = document.createElement('li');
+    let createA = document.createElement('a');
+    createLi.setAttribute('class', 'buttonLi');
+    createA.setAttribute('class', 'buttonA')
+     createUl.appendChild(createLi)[i];
+     createLi.appendChild(createA)[i];
    }
-  pagination.removeChild(pageLinkSection);
-  pagination.appendChild(pageLinkSection);
-  for (let i = 0; i < pageNumbers; i += 1){
+   appendChild();
+ }
+
+//Clears old pagination, appends new
+function removeChild (){
+  let a = document.getElementsByClassName('buttonA')[0];
+  let li = document.getElementsByClassName('buttonLi')[0];
+  $('.buttonA').empty();
+  $('.buttonLi').empty();
+ }
+
+ //Clears old pagination, appends new
+ function appendChild (){
+    pagination.appendChild(createUl);
+  }
+
+//Adds innerHTML and sets attribute for anchor tags
+function appendElements (){
+  let pageNumbersAppend = Math.ceil(studentItem.length/10);
+  for (let i = 0; i < pageNumbersAppend; i += 1){
     let page = document.getElementsByTagName('a')[i];
     page.innerHTML = i+1;
-    page.setAttribute('href', '#');
+    page.setAttribute('href', '#')
+  }
+}
+
+//Returns list of 10 students corresponding to page number clicked, sets attribute class of "active"
+function pageClick () {
+  let pageNumbersAppend = Math.ceil(studentItem.length/10);
+  for (let i = 0; i < pageNumbersAppend; i += 1){
+    let page = document.getElementsByTagName('a')[i];
     page.addEventListener('click', function(){
       let clickedPage = page.textContent-1;
       page.setAttribute('class', 'active');
@@ -58,12 +97,14 @@ const search = function (){
   let userInput = input.value.toLowerCase();
   let studentName = document.getElementsByTagName('h3');
   let studentEmail = document.getElementsByClassName('email');
-  for (let i = 0; i < studentItem.length; i += 1){
+  for (let i = 0; i < studentItemStatic.length; i += 1){
     if (studentName[i].innerHTML.toLowerCase().indexOf(userInput) > -1 ||
         studentEmail[i].innerHTML.toLowerCase().indexOf(userInput) > -1){
-      studentItem[i].style.display = '';
+      studentItem[i].style.display = 'block';
+      document.getElementsByClassName('student-item')[i].setAttribute('class', 'student-item cf yes');
     } else {
       studentItem[i].style.display = 'none';
+      document.getElementsByClassName('student-item')[i].removeAttribute('class', 'yes');
     }
   }
 }
@@ -73,6 +114,10 @@ button.addEventListener('click', search);
 input.addEventListener('keyup', search);
 
 //Called functions
-appendPageLinks(studentItem.length);
+addClass();
 appendSearchBar();
-showPage(0, studentItem.length);
+showPage(0, studentItemStatic.length);
+appendPageLinks();
+appendChild();
+appendElements();
+pageClick();
