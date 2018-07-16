@@ -1,6 +1,6 @@
-
-const studentItem = document.getElementsByClassName('student-item cf yes');
-const studentItemStatic = document.getElementsByClassName('student-item cf');
+//This program will dynamically display 10 students per page with a search feature
+//Search function will filter through student name and email and present results by both keyup and button click
+const studentItem = document.getElementsByClassName('student-item cf');
 const pagination = document.getElementsByClassName('pagination')[0];
 const searchBar = document.createElement('div');
 const input = document.createElement('input');
@@ -10,31 +10,24 @@ const pageHeader = document.getElementsByClassName('page-header cf')[0];
 const pageNumbers = Math.ceil(studentItem.length/10);
 const createUl = document.createElement('ul');
 
-function addClass (){
-  for (let i = 0; i < studentItemStatic.length; i += 1) {
-  let activeStudents = document.getElementsByClassName('student-item')[i];
-  activeStudents.setAttribute('class', 'student-item cf yes');
-  }
-}
-
 //Displays 10 students per page
-function showPage(pageNumber, studentList){
+function showPage(pageNumber, studentList, studentNamePosition){
   for (let i = 0; i < studentList; i += 1) {
-    studentItem[i].style.display = 'none';
+    studentNamePosition[i].style.display = 'none';
     if (i >= pageNumber * 10 && i <= (pageNumber * 10) + 9){
-      studentItem[i].style.display = 'block';
+      studentNamePosition[i].style.display = 'block';
     }
   }
 }
 
-//Appends li to ul and a to li
-function appendPageLinks(){
+//Clears old pagination, appends new
+function appendChild (){
+  createUl.setAttribute('class', 'ul');
   pagination.appendChild(createUl);
-  if (document.getElementsByClassName('buttonA').length > 0 ||
-      document.getElementsByClassName('buttonLi').length > 0){
-    removeChild();
-  }
-  let pageNumbersAppend = Math.ceil(studentItem.length/10);
+ }
+
+//Appends li to ul and a to li
+function appendPageLinks(pageNumbersAppend){
   for (let i = 0; i < pageNumbersAppend; i += 1) {
     let createLi = document.createElement('li');
     let createA = document.createElement('a');
@@ -43,25 +36,19 @@ function appendPageLinks(){
      createUl.appendChild(createLi)[i];
      createLi.appendChild(createA)[i];
    }
-   appendChild();
  }
 
 //Clears old pagination, appends new
 function removeChild (){
-  let a = document.getElementsByClassName('buttonA')[0];
-  let li = document.getElementsByClassName('buttonLi')[0];
-  $('.buttonA').empty();
-  $('.buttonLi').empty();
+  if (document.getElementsByClassName('buttonA').length > 0 ||
+      document.getElementsByClassName('buttonLi').length > 0){
+      $('.buttonLi').empty();
+      $('.ul').empty();
+  }
  }
 
- //Clears old pagination, appends new
- function appendChild (){
-    pagination.appendChild(createUl);
-  }
-
 //Adds innerHTML and sets attribute for anchor tags
-function appendElements (){
-  let pageNumbersAppend = Math.ceil(studentItem.length/10);
+function appendElements (pageNumbersAppend){
   for (let i = 0; i < pageNumbersAppend; i += 1){
     let page = document.getElementsByTagName('a')[i];
     page.innerHTML = i+1;
@@ -70,14 +57,13 @@ function appendElements (){
 }
 
 //Returns list of 10 students corresponding to page number clicked, sets attribute class of "active"
-function pageClick () {
-  let pageNumbersAppend = Math.ceil(studentItem.length/10);
+function pageClick (pageNumbersAppend, studentList, studentNamePosition) {
   for (let i = 0; i < pageNumbersAppend; i += 1){
     let page = document.getElementsByTagName('a')[i];
     page.addEventListener('click', function(){
-      let clickedPage = page.textContent-1;
+      let clickedPage = page.innerHTML-1;
       page.setAttribute('class', 'active');
-      showPage(clickedPage, studentItem.length);
+      showPage(clickedPage, studentList, studentNamePosition);
     });
   }
 }
@@ -92,21 +78,44 @@ function appendSearchBar(){
   button.textContent = 'Search';
 }
 
+//If no users are found during search, this function will print message to page
+//If users are found, it will clear printed message
+function printNoResults (){
+  let noResults = document.createElement('h5');
+  let div = document.createElement('div');
+  document.getElementsByClassName('student-list')[0].appendChild(div);
+  noResults.setAttribute('class', 'noResults');
+  div.setAttribute('class', 'div');
+  noResults.innerHTML = 'Sorry, there are no students that match your search';
+  if (document.querySelectorAll('#yes').length == 0 && document.querySelectorAll('.noResults').length == 0){
+    div.appendChild(noResults);
+  }
+  if (document.querySelectorAll('#yes').length !== 0 ){
+      $('.div').empty();
+  }
+}
+
 //Search function hides list items not containing user input in either email or name
 const search = function (){
   let userInput = input.value.toLowerCase();
   let studentName = document.getElementsByTagName('h3');
   let studentEmail = document.getElementsByClassName('email');
-  for (let i = 0; i < studentItemStatic.length; i += 1){
-    if (studentName[i].innerHTML.toLowerCase().indexOf(userInput) > -1 ||
-        studentEmail[i].innerHTML.toLowerCase().indexOf(userInput) > -1){
+  for (let i = 0; i < studentItem.length; i += 1){
+    if (studentName[i].innerHTML.toLowerCase().includes(userInput) == true ||
+        studentEmail[i].innerHTML.toLowerCase().includes(userInput) == true ){
       studentItem[i].style.display = 'block';
-      document.getElementsByClassName('student-item')[i].setAttribute('class', 'student-item cf yes');
+    document.getElementsByClassName('student-item')[i].setAttribute('id', 'yes');
     } else {
       studentItem[i].style.display = 'none';
-      document.getElementsByClassName('student-item')[i].removeAttribute('class', 'yes');
+      document.getElementsByClassName('student-item')[i].removeAttribute('id', 'yes');
     }
   }
+  removeChild();
+  appendPageLinks(Math.ceil(document.querySelectorAll('#yes').length/10));
+  appendElements(Math.ceil(document.querySelectorAll('#yes').length/10));
+  pageClick(Math.ceil(document.querySelectorAll('#yes').length/10), Math.ceil(document.querySelectorAll('#yes').length), document.querySelectorAll('#yes'));
+  showPage(0, Math.ceil(document.querySelectorAll('#yes').length), document.querySelectorAll('#yes'));
+  printNoResults();
 }
 
 //addEventListeners provide click and keyup feature for search bar
@@ -114,10 +123,9 @@ button.addEventListener('click', search);
 input.addEventListener('keyup', search);
 
 //Called functions
-addClass();
 appendSearchBar();
-showPage(0, studentItemStatic.length);
-appendPageLinks();
+showPage(0, studentItem.length, studentItem);
 appendChild();
-appendElements();
-pageClick();
+appendPageLinks(pageNumbers);
+appendElements(pageNumbers);
+pageClick(pageNumbers, studentItem.length, studentItem);
