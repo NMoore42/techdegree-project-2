@@ -56,15 +56,27 @@ function appendElements (pageNumbersAppend){
   }
 }
 
-//Returns list of 10 students corresponding to page number clicked, sets attribute class of "active"
+//Returns list of 10 students corresponding to page number clicked
 function pageClick (pageNumbersAppend, studentList, studentNamePosition) {
   for (let i = 0; i < pageNumbersAppend; i += 1){
     let page = document.getElementsByTagName('a')[i];
     page.addEventListener('click', function(){
       let clickedPage = page.innerHTML-1;
-      page.setAttribute('class', 'active');
       showPage(clickedPage, studentList, studentNamePosition);
     });
+  }
+}
+
+//Activates and deactivates clicked button class.  Default to first button
+function buttonClick (buttons) {
+  let page = document.getElementsByClassName('buttonA');
+  page[0].setAttribute('class', 'buttonA active');
+    for (let i = 0; i < buttons; i += 1){
+      page[i].addEventListener('click', function(){
+        var current = document.getElementsByClassName('active');
+        current[0].className = current[0].className.replace(' active', '');
+        this.className += ' active';
+      });
   }
 }
 
@@ -116,6 +128,7 @@ const search = function (){
   pageClick(Math.ceil(document.querySelectorAll('#yes').length/10), Math.ceil(document.querySelectorAll('#yes').length), document.querySelectorAll('#yes'));
   showPage(0, Math.ceil(document.querySelectorAll('#yes').length), document.querySelectorAll('#yes'));
   printNoResults();
+  buttonClick(document.querySelectorAll('#yes').length/10);
 }
 
 //addEventListeners provide click and keyup feature for search bar
@@ -129,3 +142,4 @@ appendChild();
 appendPageLinks(pageNumbers);
 appendElements(pageNumbers);
 pageClick(pageNumbers, studentItem.length, studentItem);
+buttonClick(pageNumbers);
